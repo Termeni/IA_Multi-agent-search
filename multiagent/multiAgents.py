@@ -163,18 +163,65 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         legalMoves = gameState.getLegalActions(0)
-        scores = [self.min_minimax(gameState, action) for action in legalMoves]
+        scores = [self.minValue(gameState.generateSuccessor(0,action),0) for action in legalMoves]
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = bestIndices[0]
+        #print legalMoves[chosenIndex]
         return legalMoves[chosenIndex]
       
-    def min_minimax(self, currentGameState, action):
-      successorGameState = currentGameState.generatePacmanSuccessor(action)
+    def minValue(self, successorGameState, level):
+      #print self.depth
+      #print level
+      if successorGameState.isWin() or successorGameState.isLose() or level==self.depth:
+        return successorGameState.getScore()
         
+      ghostIndices = [index for index in range(successorGameState.getNumAgents()) if index>0]
+      actions = []
+      for index in ghostIndices:
+        actions.append(successorGameState.getLegalActions(index))
+      
+      gameStates = []
+      ghost = 0
+      for actionList in actions:
+        ghost = ghost+1
+        if len(gameStates) == 0:
+          for action in actionList:
+            gameStates.append(successorGameState.generateSuccessor(ghost,action))
+        else:
+          gameStatesAux = []
+          for game in gameStates:
+            for action in actionList:
+              if(game.isWin() or game.isLose()):
+                pass
+              else:
+                gameStatesAux.append(game.generateSuccessor(ghost,action))
+          gameStates=gameStatesAux
+          
+      inf = float("inf")
+      values=[inf]
+      for game in gameStates:
+        values.append(self.maxValue(game,level+1))
         
-        
-        #util.raiseNotDefined()
+      return min(values)
+      
+    def maxValue(self, successorGameState, level):
+      if successorGameState.isWin() or successorGameState.isLose() or level==self.depth:
+        return successorGameState.getScore()
+      legalMoves = successorGameState.getLegalActions(0)
+      
+      gameStates = []
+      for move in legalMoves:
+        gameStates.append(successorGameState.generateSuccessor(0,move))
+      
+      inf = float("inf")
+      values=[-inf]
+      for game in gameStates:
+        values.append(self.minValue(game, level))
+      #print values
+      
+      return max(values)
+      
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
