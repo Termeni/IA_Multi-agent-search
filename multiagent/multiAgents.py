@@ -143,7 +143,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
       Your minimax agent (question 2)
     """
-
+    
     def getAction(self, gameState):
         """
           Returns the minimax action from the current gameState using self.depth
@@ -162,42 +162,42 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
+        
+        #print gameState
         legalMoves = gameState.getLegalActions(0)
+        #print legalMoves
         scores = [self.minValue(gameState.generateSuccessor(0,action),0) for action in legalMoves]
+        #print scores
         bestScore = max(scores)
+        #print bestScore
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        chosenIndex = bestIndices[0]
-        #print legalMoves[chosenIndex]
-        return legalMoves[chosenIndex]
+        #print bestIndices
+        chosenIndex = random.choice(bestIndices)
+        #chosenIndex = bestIndices[0]
+        #print chosenIndex
+        action = legalMoves[chosenIndex]
+        return action
       
     def minValue(self, successorGameState, level):
       #print self.depth
       #print level
       if successorGameState.isWin() or successorGameState.isLose() or level==self.depth:
-        return successorGameState.getScore()
+        return self.evaluationFunction(successorGameState)
         
       ghostIndices = [index for index in range(successorGameState.getNumAgents()) if index>0]
-      actions = []
-      for index in ghostIndices:
-        actions.append(successorGameState.getLegalActions(index))
-      
       gameStates = []
-      ghost = 0
-      for actionList in actions:
-        ghost = ghost+1
-        if len(gameStates) == 0:
-          for action in actionList:
-            gameStates.append(successorGameState.generateSuccessor(ghost,action))
+      for index in ghostIndices:
+        if index==1:
+          for action in successorGameState.getLegalActions(index):
+            gameStates.append(successorGameState.generateSuccessor(index,action))
         else:
           gameStatesAux = []
           for game in gameStates:
-            for action in actionList:
-              if(game.isWin() or game.isLose()):
-                pass
-              else:
-                gameStatesAux.append(game.generateSuccessor(ghost,action))
-          gameStates=gameStatesAux
-          
+            for action in game.getLegalActions(index):
+              gameStatesAux.append(game.generateSuccessor(index,action))
+          gameStates = gameStatesAux
+
+      
       inf = float("inf")
       values=[inf]
       for game in gameStates:
@@ -207,20 +207,15 @@ class MinimaxAgent(MultiAgentSearchAgent):
       
     def maxValue(self, successorGameState, level):
       if successorGameState.isWin() or successorGameState.isLose() or level==self.depth:
-        return successorGameState.getScore()
+        return self.evaluationFunction(successorGameState)
+        
       legalMoves = successorGameState.getLegalActions(0)
-      
-      gameStates = []
-      for move in legalMoves:
-        gameStates.append(successorGameState.generateSuccessor(0,move))
+      scores = [self.minValue(successorGameState.generateSuccessor(0,action),level) for action in legalMoves]
       
       inf = float("inf")
-      values=[-inf]
-      for game in gameStates:
-        values.append(self.minValue(game, level))
-      #print values
+      scores.append(-inf)
       
-      return max(values)
+      return max(scores)
       
 
 class AlphaBetaAgent(MultiAgentSearchAgent):

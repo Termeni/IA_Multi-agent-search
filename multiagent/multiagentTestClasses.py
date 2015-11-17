@@ -188,7 +188,7 @@ class GradingAgent(Agent):
         for i in range(len(partialPlyBugActions)):
             if studentAction[0] not in partialPlyBugActions[i]:
                 self.actionsConsistentWithPartialPlyBug[i] = False
-        if not studentOptimalAction:
+        if not studentOptimalAction: 
             self.suboptimalMoves.append((state, studentAction[0], optimalActions[0][0][0]))
         self.stepCount += 1
         random.seed(self.seed + self.stepCount)
@@ -382,6 +382,7 @@ class GraphGameTreeTest(testClasses.TestCase):
         self.problem.reset()
         studentAgent = getattr(multiAgents, self.alg)(depth=self.depth)
         action = studentAgent.getAction(self.problem.startState)
+        print action
         generated = self.problem.generatedStates
         return action, " ".join([str(s) for s in sorted(generated)])
 
