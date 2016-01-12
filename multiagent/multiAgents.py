@@ -47,18 +47,13 @@ class ReflexAgent(Agent):
         some Directions.X for some X in the set {North, South, West, East, Stop}
         """
         # Collect legal moves and successor states
-        legalMoves = gameState.getLegalActions()
+        legalMoves = gameState.getLegalActions(1)
 
         # Choose one of the best actions
-        #print "Info:"
-        #time.sleep(1)
-        #print gameState
-        #print gameState.getFood()
-        #print gameState.getPacmanPosition()
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        chosenIndex = bestIndices[0] # Pick randomly among the best
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
 
@@ -80,42 +75,25 @@ class ReflexAgent(Agent):
         to create a masterful evaluation function.
         """
         # Useful information you can extract from a GameState (pacman.py)
-        successorGameState = currentGameState.generatePacmanSuccessor(action)
-        newPos = successorGameState.getPacmanPosition()
-        newFood = successorGameState.getFood()
-        newGhostStates = successorGameState.getGhostStates()
-        newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        # successorGameState = currentGameState.generateSuccessor(1,action)
+        # newPos = successorGameState.getPacmanPosition()
+        # newFood = successorGameState.getFood()
+        # newGhostStates = successorGameState.getGhostStates()
+        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
         
         "*** YOUR CODE HERE ***"
-        for move in successorGameState.getLegalActions():
-          successorGameState2 = successorGameState.generatePacmanSuccessor(move)
-          newPos2 = successorGameState2.getPacmanPosition()
-          if successorGameState2.isLose():
-            return successorGameState.getScore()-9999         
-
-
-        #print "Food:"
-        actPos = currentGameState.getPacmanPosition()
-        foodPos=(0,0)
-        x=0
-        y=0
-        for foodRows in newFood:
-          x=x+1
-          y=0
-          for food in foodRows:
-            y=y+1
-            if food:
-              foodPos=(x,y)
-        #print "posicions"
-        #print foodPos
-        #print newPos
-        #print actPos
-        if( abs(foodPos[0]-newPos[0])<abs(foodPos[0]-actPos[0]) or abs(foodPos[1]-newPos[1])<abs(foodPos[1]-actPos[1])):
-          return successorGameState.getScore()+5  
-        else:
-          return successorGameState.getScore()
-        
-        
+        pacmanPosition = currentGameState.getPacmanPosition()
+        ghostPosition = currentGameState.getGhostPosition(1)
+        if ghostPosition[1] > pacmanPosition[1] and action == 'South':
+          return 5
+        elif ghostPosition[1] < pacmanPosition[1] and action == 'North': 
+          return 5
+        elif ghostPosition[0] > pacmanPosition[0] and action == 'West':
+          return 5
+        elif ghostPosition[0] < pacmanPosition[0] and action == 'East':
+          return 5
+        else: 
+          return 1
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -125,8 +103,8 @@ def scoreEvaluationFunction(currentGameState):
       This evaluation function is meant for use with adversarial search agents
       (not reflex agents).
     """
-    #return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
-    return currentGameState.getScore()
+    return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
+    #return currentGameState.getScore()
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -262,53 +240,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           if beta < alpha:
             return beta
         return beta
-        
-    """
-   Your minimax agent with alpha-beta pruning (question 3)
-  def alphaBeta(self, gameState, depth, agentIndex=0, alpha=(-INF,), beta=(INF,)):
-    
-      Return the best choice (score, action) for the current agent.
-      If agentIndex == 0 it is a max node, otherwise it is a min node.
-    
-    #: check if the game ends, or we reach the depth
-    if gameState.isWin() or gameState.isLose() or depth == 0:
-      #: return (current_score, )
-      return ( self.evaluationFunction(gameState), )
 
-    numAgents = gameState.getNumAgents()
-    #: if current agent is the last agent in game, decrease the depth
-    newDepth = depth if agentIndex != numAgents - 1 else depth - 1
-    newAgentIndex = (agentIndex + 1) % numAgents
 
-    if(agentIndex == 0):    #: max node
-      v = (-INF, )
-      for a in gameState.getLegalActions(agentIndex):
-        nextState = gameState.generateSuccessor(agentIndex, a)
-        v = max([v, (self.alphaBeta(nextState, newDepth, newAgentIndex, alpha, beta)[0], a)])
-        if v > beta:
-          return v
-        alpha = max([alpha, v])
-      return v
-
-    else:                   #: min node
-      v = (INF, )
-      for a in gameState.getLegalActions(agentIndex):
-        nextState = gameState.generateSuccessor(agentIndex, a)
-        v = min([v, (self.alphaBeta(nextState, newDepth, newAgentIndex, alpha, beta)[0], a)])
-        if alpha > v:
-          return v
-        beta = min([beta, v])
-      return v
-
-  def getAction(self, gameState):
-    
-      Returns the minimax action using self.depth and self.evaluationFunction
-    
-    "*** YOUR CODE HERE ***"
-    s = self.alphaBeta(gameState, self.depth)
-    print "SCORE", s[0]
-    return s[1]
-    """
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
