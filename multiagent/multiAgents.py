@@ -257,7 +257,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
               return beta
             cridaTmp = crida[0][0],action
             crida = cridaTmp
-          if crida[0] < beta[0]:
+          if crida[0] <= beta[0]:
             beta = crida
           if beta < alpha:
             return beta
