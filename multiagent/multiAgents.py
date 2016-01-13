@@ -149,7 +149,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        return self.minimax(gameState, self.depth, 0)[1]
+        return self.minimax(gameState, self.depth, self.index)[1]
       
     def minimax(self, gameState, depth, agentIndex):
       if depth == 0 or gameState.isWin() or gameState.isLose():
@@ -187,7 +187,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        return self.alphaBeta(gameState, self.depth, 0, (-INF,), (INF,))[1]
+        return self.alphaBeta(gameState, self.depth, self.index, (-INF,), (INF,))[1]
         
     def alphaBeta(self, gameState, depth, agentIndex, alpha, beta):
       if depth == 0 or gameState.isWin() or gameState.isLose():
