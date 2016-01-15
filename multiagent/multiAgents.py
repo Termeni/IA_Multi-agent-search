@@ -187,7 +187,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        return self.alphaBeta(gameState, self.depth, 0, (-INF,), (INF,))[1]
+        return self.alphaBeta(gameState, self.depth, self.index, (-INF,), (INF,))[1]
         
     def alphaBeta(self, gameState, depth, agentIndex, alpha, beta):
       #time.sleep(1)
