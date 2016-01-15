@@ -103,8 +103,8 @@ def scoreEvaluationFunction(currentGameState):
       This evaluation function is meant for use with adversarial search agents
       (not reflex agents).
     """
-    #return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
-    return currentGameState.getScore()
+    return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
+    #return currentGameState.getScore()
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -212,9 +212,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in gameState.getLegalActions(agentIndex):
           successorGameState = gameState.generateSuccessor(agentIndex,action) 
           crida = (self.alphaBeta(successorGameState, newDepth, newAgentIndex, alpha, beta),action)
-          print "MAX ",crida
-          print "alpha ",alpha
-          print "beta ",beta
+          #print "MAX ",crida
+          #print "alpha ",alpha
+          #print "beta ",beta
           if crida[0][0] > alpha[0]:
             cridaTmp = crida[0][0],action
             alpha = cridaTmp
@@ -226,9 +226,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in gameState.getLegalActions(agentIndex):
           successorGameState = gameState.generateSuccessor(agentIndex,action) 
           crida = (self.alphaBeta(successorGameState, newDepth, newAgentIndex, alpha, beta),action)
-          print "MIN ",crida
-          print "alpha ",alpha
-          print "beta ",beta
+          #print "MIN ",crida
+          #print "alpha ",alpha
+          #print "beta ",beta
           if crida[0][0] < beta[0]:
             cridaTmp = crida[0][0],action
             beta = cridaTmp
