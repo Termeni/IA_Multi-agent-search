@@ -103,8 +103,8 @@ def scoreEvaluationFunction(currentGameState):
       This evaluation function is meant for use with adversarial search agents
       (not reflex agents).
     """
-    return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
-    #return currentGameState.getScore()
+    #return manhattanDistance(currentGameState.getPacmanPosition(),currentGameState.getGhostPosition(1))
+    return currentGameState.getScore()
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -187,11 +187,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        return self.alphaBeta(gameState, self.depth, self.index, (-INF,), (INF,))[1]
+        return self.alphaBeta(gameState, self.depth, 0, (-INF,), (INF,))[1]
         
     def alphaBeta(self, gameState, depth, agentIndex, alpha, beta):
+      #time.sleep(1)
       if depth == 0 or gameState.isWin() or gameState.isLose():
-         return self.evaluationFunction(gameState)
+         return (self.evaluationFunction(gameState),)
 
       if agentIndex==0:
         maximizingPlayer = True
@@ -211,16 +212,13 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in gameState.getLegalActions(agentIndex):
           successorGameState = gameState.generateSuccessor(agentIndex,action) 
           crida = (self.alphaBeta(successorGameState, newDepth, newAgentIndex, alpha, beta),action)
-          if isinstance(crida[0],tuple):
-            if crida[0] == beta:
-              return beta
-            if crida[0] == alpha:
-              return alpha
+          print "MAX ",crida
+          print "alpha ",alpha
+          print "beta ",beta
+          if crida[0][0] > alpha[0]:
             cridaTmp = crida[0][0],action
-            crida = cridaTmp
-          if crida[0] >= alpha[0]:
-            alpha = crida
-          if alpha > beta:
+            alpha = cridaTmp
+          if alpha[0] >= beta[0]:
             return alpha
         return alpha
 
@@ -228,16 +226,13 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in gameState.getLegalActions(agentIndex):
           successorGameState = gameState.generateSuccessor(agentIndex,action) 
           crida = (self.alphaBeta(successorGameState, newDepth, newAgentIndex, alpha, beta),action)
-          if isinstance(crida[0],tuple):
-            if crida[0] == alpha:
-              return alpha
-            if crida[0] == beta:
-              return beta
+          print "MIN ",crida
+          print "alpha ",alpha
+          print "beta ",beta
+          if crida[0][0] < beta[0]:
             cridaTmp = crida[0][0],action
-            crida = cridaTmp
-          if crida[0] <= beta[0]:
-            beta = crida
-          if beta < alpha:
+            beta = cridaTmp
+          if beta[0] <= alpha[0]:
             return beta
         return beta
 
